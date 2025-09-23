@@ -1,8 +1,10 @@
 class _Node:
     __slots__ = ("name", "next")
+
     def __init__(self, name, next=None):
         self.name = name
         self.next = next
+
 
 class Waitlist:
     def __init__(self):
@@ -11,11 +13,12 @@ class Waitlist:
         self._size = 0
 
     def __len__(self):
-        """Return number of people on the waitlist."""
         return self._size
 
+    def __repr__(self):
+        return f"Waitlist({self.to_list()})"
+
     def to_list(self):
-        """Return names from head to tail as a Python list."""
         result = []
         curr = self.head
         while curr:
@@ -24,9 +27,8 @@ class Waitlist:
         return result
 
     def join(self, name):
-        """Append name at the tail (O(1))."""
         new_node = _Node(name)
-        if not self.head:  # empty list
+        if not self.head:
             self.head = self.tail = new_node
         else:
             self.tail.next = new_node
@@ -34,7 +36,6 @@ class Waitlist:
         self._size += 1
 
     def find(self, name):
-        """Return True if name exists, else False."""
         curr = self.head
         while curr:
             if curr.name == name:
@@ -43,7 +44,6 @@ class Waitlist:
         return False
 
     def cancel(self, name):
-        """Remove first occurrence; return True if removed."""
         prev, curr = None, self.head
         while curr:
             if curr.name == name:
@@ -51,15 +51,15 @@ class Waitlist:
                     prev.next = curr.next
                 else:
                     self.head = curr.next
-                if curr == self.tail:  # if tail is removed
+                if curr == self.tail:
                     self.tail = prev
+                curr.next = None  # optional cleanup
                 self._size -= 1
                 return True
             prev, curr = curr, curr.next
         return False
 
     def bump(self, name):
-        """Move first occurrence to the head; return True if moved."""
         if not self.head or self.head.name == name:
             return bool(self.head and self.head.name == name)
 
